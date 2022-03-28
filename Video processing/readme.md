@@ -57,6 +57,22 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 
 ---
 ## 5주차 내용
+- 파이썬에서 배열을 처리하기 위한 자료형
+  - 열겨형 객체 (sequence) - List, tuple, dictionary
+ 
+- 명칭 및 표현
+  - 1차원 데이터 : 벡터
+  - 2차원 데이터 : 행렬
+  - 1차원과 2차원 데이터 통칭해서 배열
+
+- 배열 처리 함수 (np.array)
+  - cv2.flip :        입력된 2차원 배열을 수직, 수평, 양축으로 뒤집음
+    - x_flip - x축 기준 뒤집기 -> cv2.flip(image,0) 
+    - y_flip - y축 기준 뒤집기 -> cv2.flip(image,1)
+    - xy_flip - x,y축으로 한번씩 뒤집기. -> cv2.flip(image,-1) 
+    - repeat : 복붙, transpose - 대각선 뒤집기.
+  - cv2.repeat :      입력 배열의 반복된 복사본으로 출력 배열을 채움.
+  - cv2.transpose() : 입력 행렬의 전치 행렬을 출력으로 반환
 
 ---
 ## 6주차 내용
