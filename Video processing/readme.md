@@ -102,14 +102,37 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 - cv2.pow() : 제곱 승수를 계산
 
 `2학기에 배우는 친구들`
-- cv2.magnitude() <br>
+- cv2.magnitude() : $ magnitude =  \sqrt { x^{(i)}^2 + y^{(i)}^2 }  $ 
+  - 아 왜 마크다운 안되냐...  휴... 아무튼 두 점 사이의 거리를 구하는 것과 같음.!
+- cv2.phase : 이거는 각도 계산.
+  - angle(i) = a x tan2(y, x)·[180/\pi]
 
-$ x^{(i)}^2 + y^{(i)}^2 $
-
-- cv2.phase : 이거도 복소수 계산인데 학기말
-- cv2.cartToPolar()
+- cv2.cartToPolar() : 극좌표로 변환되서 동그마리가 됌.
 - cv2.polarToCart()
 
+#### 논리(비트) 연산 함수
+- cv2.bitwise_and : 논리 곱 연산인 AND 연산 수행. 
+- cv2.bitwise_or : 논리 합 연산인 OR 연산 수행.
+- cv2.bitwise_xor : 배타적 논리합 XOR
+- cv2.bitwise_not : not을 통해 비트반전.
+
+#### 원소의 최솟값과 최댓값.
+- cv2.min()
+- cv2.max()
+- cv2.minMaxLoc() : 위치 반환
+
+#### 통계 관련 함수
+- cv2.sumElecs()
+- cv2.mean()
+- cv2.meanStdDev()  : 배열 원소들의 평균과 표준편차를 계산한다.
+- cv2.countNonZero() : 0이 아닌 배열의 원소 개수 N을 반환.
+- cv2.reduce() : 행렬 축소
+  - dim = 0 => 한 행으로 감축, dim =1 => 한 열로 갑축 
+  - cv2.REDUCE_SUM : 행렬의 모든 행을 한방향으로 찌부 시킴 
+  - cv2.REDUCE_AVG
+  - cv2.REDUCE_MAX
+  - cv2.REDUCE_MIN
+- cv2.sort()   : 행렬 정렬
 
 
 
