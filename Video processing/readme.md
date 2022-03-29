@@ -28,7 +28,7 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 - `cv2.waitKeyEx()`는 특정 입력에 대해서 반응. 사용법은 `cv2.waitKey()`와 같음
 
 ##### cv2.setMouseCallback(title, 사용자 정의 함수)
-- 함수 정의 후 마우스 움직임 : `cv2.EVENT_LBUTTONDOWN` , cv2.EVENT_RBUTTONDOWN`, `cv2.EVENT_LBUTTONUP`, `cv2.EVENT_RBUTTONUP`
+- 함수 정의 후 마우스 움직임 : `cv2.EVENT_LBUTTONDOWN` , `cv2.EVENT_RBUTTONDOWN`, `cv2.EVENT_LBUTTONUP`, `cv2.EVENT_RBUTTONUP`
 - `cv2.EVENT_LBUTTONDBCLICK` 이거는 더블클릭하는 친구인데.. 말을 안듣는다..
 - `cv2.setMouseCallback(title1, onMouse) : 마우스 관련 사용자 정의 함수 `onMouse`및 작동할 window name 적기.
 
