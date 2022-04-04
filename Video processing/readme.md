@@ -14,6 +14,8 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 3. np.reshape(c, (-1, ))
 4. d.reshape(-1)
 
+- rectangle 그리기. `cv2.rectangele(src, (우측하단 ~ 좌측상단) , fill_value, option)`
+
 ---
 ## 4주차 배운 내용.
 
@@ -155,5 +157,6 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 #### 관측값의 개수를 겹치지 않는 다양한 계급으로 표시하는 것.
 - Histogram의 value / count of Histogram => P(i), 특정 Pixel이 등장할 확률을 구할 수 있음.
 - cv2.calcHist(image, channels, mask, histSize, ranges)
+- `cv2.normalize(src, dst, alpha, beta, norm_type, dtype, mask)` ->  n = (filtered - np.min()) / (np.max() - np.min())
 
 
