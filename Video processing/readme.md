@@ -134,7 +134,26 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
   - cv2.REDUCE_MIN
 - cv2.sort()   : 행렬 정렬
 
-
-
 ---
 ## 6주차 내용
+
+#### OpenCV와 numpy의 0 미만 255 이상의 화소값 처리 방식 다름 주의
+- OpenCV : 255+100 = 360 -> 255 (stauration 방식)
+  - `cv2.add(iamge, 100)`, `cv2.subtract(image,100)`
+- numpy  : 255+100 = 350%255 -> 104 (modulo 방식)
+  - `image + 100`, `image-100`
+
+- np.clip(image, 0, 255) -> 0부터 255까지 처리.
+- `cv2.addWeighted(image1, alpha, image2, beta, c)` -> result = image1 * a + image2 * b + c
+
+### 대비 : 같은 색도 인접한 색에 밝기에 따라서 다르게 보임
+- cv2.scaledAdd(image, 0.5, 더할 이미지 *필수)  -> 일정 값을 곱하고 같은 크기의 이미지를 더함. 
+- cv2.addWeighted(image, 2, 더할 이미지, 0, c) image * 2 + 더할 이미지 * 0 + c 값을 계산.
+  - OpenCV 내의 scaledAdd를 사용하기 때문에 saturation 연산이 적용됨.
+
+### 히스토그램
+#### 관측값의 개수를 겹치지 않는 다양한 계급으로 표시하는 것.
+- Histogram의 value / count of Histogram => P(i), 특정 Pixel이 등장할 확률을 구할 수 있음.
+- cv2.calcHist(image, channels, mask, histSize, ranges)
+
+
