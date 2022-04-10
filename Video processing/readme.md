@@ -29,14 +29,25 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 ##### cv2.waitKeyEx()
 - `cv2.waitKeyEx()`는 특정 입력에 대해서 반응. 사용법은 `cv2.waitKey()`와 같음
 
-##### cv2.setMouseCallback(title, 사용자 정의 함수)
+##### cv2.setMouseCallback(windowName, 사용자 정의 함수(onMouse), param=None(추가적인 사용자 정의 인수))
 - 함수 정의 후 마우스 움직임 : `cv2.EVENT_LBUTTONDOWN` , `cv2.EVENT_RBUTTONDOWN`, `cv2.EVENT_LBUTTONUP`, `cv2.EVENT_RBUTTONUP`
 - `cv2.EVENT_LBUTTONDBCLICK` 이거는 더블클릭하는 친구인데.. 말을 안듣는다..
-- `cv2.setMouseCallback(title1, onMouse) : 마우스 관련 사용자 정의 함수 `onMouse`및 작동할 window name 적기.
+- `cv2.setMouseCallback(windowName, onMouse) : 마우스 관련 사용자 정의 함수 `onMouse`및 작동할 windowName 적기.
 
-##### cv2.createTrackbar()
+##### def onMouse(event, x, y, flags, param = None):
+  - 발생한 이벤트에 대한 처리와 제어를 구현하는 콜백함수. cv2.setMouseCallback() 함수의 두번째 인수 구현부, 따라서 이름이 같아야 함.
+  - onMouse와 setMouseCallback의 인수와 인자는 같아야함.
+
+##### cv2.createTrackbar(trackbarname, windowname, value, count, onChange) -> None:
 - `createTrackbar("Name of Track Bar", window Name, start value, end value, 사용자 정의 함수)` # 트랙바 만들기.
-- 트랙바 만들 때 `global image, title` 을 통해 전역변수로 사용함. 
+- 트랙바 함수 정의 def onChange() 선언 후 `global image, title` 을 통해 전역변수로 사용함. 안그러면 지역변수로 주소 다른애 또 생겨버려.. 
+- trackbarname은 imshow를 하여 그림안에 나타나는 trackbar의 name지정.
+- windowName은 이 trackbar를 띄울 windowName을 지정.
+- value는 이 그림이 imshow를 하여 띄워졌을 때 나타날 초기 값.
+- count는 이 트랙바의 maxValue로 0부터 count까지의 값.
+- onChange는 트랙바의 콜백 함수.
+
+
 
 ##### OpenCV에서 사진에 그림그리기
 - <b> `OpenCV`에서 색상 배열은 `BGR` 순임. 참고로 `matplotlib은 RGB`니까 다시 변환 해야함. </b>
