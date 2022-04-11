@@ -21,9 +21,13 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 ---
 ## 4주차 배운 내용.
 
-##### cv2.namedWindow()
-- cv2.namedWindow(title1, cv2.WINDOW_AUTOSIZE)  # cv2.WINDOW_AUTOSIZE는 크기 설정 불가.
-- cv2.namedWindow(title1, cv2.WINDOW_NORMAL) # cv2.WINDOW_NORMAL은 크기 변경 가능
+##### cv2.namedWindow(windowName, [flag])
+- cv2.namedWindow(title1, cv2.WINDOW_AUTOSIZE)  # cv2.WINDOW_AUTOSIZE는 크기 설정 불가. flag = 1
+- cv2.namedWindow(title1, cv2.WINDOW_NORMAL) # cv2.WINDOW_NORMAL은 크기 변경 가능       flag = 0
+
+#### cv2.moveWindow(windowName, x, y):
+  - windowName 이름을 가진 window를 x,y만큼 이동시킨다.
+  - cv2.namedWindow()가 선언되어야 사용할 수 있다.
 
 ##### cv2.resizeWindow()
 - 크기 변경은 `cv2.resizeWindow(title1, 400, 300)` # 400x300 size로 resize
@@ -53,8 +57,16 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 
 ##### OpenCV에서 사진에 그림그리기
 - <b> `OpenCV`에서 색상 배열은 `BGR` 순임. 참고로 `matplotlib은 RGB`니까 다시 변환 해야함. </b>
-- cv2.line(image, startpoint, stoppoint, color,  THICKNESS, draw Line_AA or LINE_4 , 8 ..ect )
-- rectangle(image, (image, first point (Left-high) , second 3point (Right-bottom) .. 위와 같음)
+- cv2.line(img, pt1, pt2, color, [thickness, lineType, shift]) -> img
+  - pt1 = startpoint, pt2 = stoppoint
+  - cv2.line(image, startpoint, stoppoint, color,  THICKNESS, draw Line_AA or LINE_4 , 8 ..ect )
+- cv2.rectangle(img, pt1, pt2, color, [thickness, lineType, shift])
+- cv2.rectangle(img rec, color, [thickness, lineType, shift])
+  - rec = image, pt1 = lefttop, pt2 = bottomright 
+  - rectangle(image, (image, first point (Left-high) , second 3point (Right-bottom) .. 위와 같음)
+- cv2.circle(img, center, radius, color, [thickness, lineType, shift])
+  - thickness = cv2.FILLED 일 경우 내부를 채움. 
+ 
 
 ##### cv2.imread()
 - cv2.imread()를 통해 이미지를 불러옴. 흑백으로 불러올까? -> `cv2.IMREAD_GRAYSCALE`, 컬러로 불러올까? -> `cv2.IMEAD_COLOR`
@@ -68,7 +80,7 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 1. `cv2.COLOR_BGR2RGB` : OpenCV에서 제공하는 BGR형식은 matplotlib의 RGB형식과 다르기 때문에 `cv2.cvtColor`로 바꿈.
 2. `cv2.COLOR_GBR2GRAY` : BGR형식을 GRAY의 회색 형식으로 바꿔줌
 - `plt.axis('off')` # 축을 없앰, `plt.tight_layout()` # 여백도 없음
-- `plt.suptitle("서브타이틀이 존재할 떄 슈퍼 타이틀로 제목 설정...!! ")`
+- `plt.suptitle("서브타이틀이 존재할 때 슈퍼 타이틀로 제목 설정...!! ")`
 
 ---
 ## 5주차 내용
@@ -110,6 +122,7 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 #### 사칙 연산
 - openCV의 연산에서는 saturation 방식 사용 255+100 = 255, but numpy에서는 255+100 = 355%255
 - cv2.add(srt1, srt2, [dst, mask, dtype])
+  - 연산 수행 방식 : `if mask(i) != 0: dst = srt1(i)+srt2(i)`
   - 만약 c = cv2.add(a,b,b,None) 일 때. 출력결과는 어떻게 될까? c와 b는 같다.
   - 그렇다면 c = cv2.add(a,b,b.copy(), None) 일 때 출력 결과는? c와 b의 값은 다르다.
   - a 와 b를 더한 값을 b에 넣어주고 그 값이 c로 들어가기 때문에 1번문장에서는 같지만 
@@ -141,27 +154,33 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 - cv2.polarToCart()
 
 #### 논리(비트) 연산 함수
-- cv2.bitwise_and : 논리 곱 연산인 AND 연산 수행. 
-- cv2.bitwise_or : 논리 합 연산인 OR 연산 수행.
-- cv2.bitwise_xor : 배타적 논리합 XOR
-- cv2.bitwise_not : not을 통해 비트반전.
+- cv2.bitwise_and(src1, src2, [dst, mask]) : 논리 곱 연산인 AND 연산 수행. 
+  - `if mask(i) != 0: dst(i) =  src1(i)^src2(i)`
+- cv2.bitwise_or(src1, src2, [dst, mask]) : 논리 합 연산인 OR 연산 수행.
+  - `if mask(i) != 0: dst(i) =  src1(i)|src2(i)`
+- cv2.bitwise_xor(src1, src2, [dst, mask]) : 배타적 논리합 XOR
+  - `if mask(i) != 0: dst(i) = src1(i) and src2(i)`
+- cv2.bitwise_not(src, [dst, mask]) : not을 통해 비트반전.
+  - dst = ~src 
 
 #### 원소의 최솟값과 최댓값.
-- cv2.min()
+- cv2.min(src1, src2, [dst])
 - cv2.max()
-- cv2.minMaxLoc() : 위치 반환
+- cv2.minMaxLoc(src, [mask] ) : 위치 반환
 
 #### 통계 관련 함수
-- cv2.sumElecs()
-- cv2.mean()
+- cv2.sumElems(src): 배열의 채널별로 각 원소들의 합 N을 반환함. src는 1부터 4사이의 채널을 갖는 입력배열
+- cv2.mean(src, [mask] ) : 각 채널별 원소들의 평균을 계산하여 스칼라 값으로 반환. src는 위와 같음 mask부분 제외.
 - cv2.meanStdDev()  : 배열 원소들의 평균과 표준편차를 계산한다.
 - cv2.countNonZero() : 0이 아닌 배열의 원소 개수 N을 반환.
-- cv2.reduce() : 행렬 축소
+- cv2.reduce(src, dim, rtype, [dst, dtype]) : 행렬 축소 
+  - src의 type은 float32 혹은 float64 만 가능.
   - dim = 0 => 한 행으로 감축, dim =1 => 한 열로 갑축 
-  - cv2.REDUCE_SUM : 행렬의 모든 행을 한방향으로 찌부 시킴 
-  - cv2.REDUCE_AVG
-  - cv2.REDUCE_MAX
-  - cv2.REDUCE_MIN
+  - rtype : 축소 타입 고르기 0 : 합, 1 : 평균, 3 : 최대값, 4 : 최소값
+    - cv2.REDUCE_SUM : 행렬의 모든 행 또는 열을 한방향으로 찌부 시킴 그리고 행 또는 열의 합을 return 
+    - cv2.REDUCE_AVG : 행렬의 행 또는 열의 평균
+    - cv2.REDUCE_MAX : 행렬의 행 또는 열의 최댓값
+    - cv2.REDUCE_MIN : 최솟값.
 - cv2.sort()   : 행렬 정렬
 
 ---
