@@ -65,7 +65,7 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
   - rec = image, pt1 = lefttop, pt2 = bottomright 
   - rectangle(image, (image, first point (Left-high) , second 3point (Right-bottom) .. 위와 같음)
 - cv2.circle(img, center, radius, color, [thickness, lineType, shift])
-  - thickness = cv2.FILLED 일 경우 내부를 채움. 
+  - thickness = cv2.FILLED 일 경우 내부를 채움.  `-1` 도 가능.!
  
 
 ##### cv2.imread()
@@ -165,8 +165,9 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 
 #### 원소의 최솟값과 최댓값.
 - cv2.min(src1, src2, [dst])
+  - 수식 : `dst(i) = min(src1(i), src2(i))` 
 - cv2.max()
-- cv2.minMaxLoc(src, [mask] ) : 위치 반환
+- cv2.minMaxLoc(src, [mask] ) -> minVal, maxVal, minLoc, maxLoc 반환
 
 #### 통계 관련 함수
 - cv2.sumElems(src): 배열의 채널별로 각 원소들의 합 N을 반환함. src는 1부터 4사이의 채널을 갖는 입력배열
@@ -181,29 +182,66 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
     - cv2.REDUCE_AVG : 행렬의 행 또는 열의 평균
     - cv2.REDUCE_MAX : 행렬의 행 또는 열의 최댓값
     - cv2.REDUCE_MIN : 최솟값.
-- cv2.sort()   : 행렬 정렬
-
+- cv2.sort(src, flags, [dst])   : 행렬 정렬
+  - flags : 연산 플래그, 다음의 상수를 `+`로 조합해서 정렬 방식 구성.
+    - cv2.SORT_EVERY_ROW     0  -> 각 행을 독립적으로 정렬.
+    - cv2.SORT_EVERY_COLUMN  1  -> 각 열을 독립적으로 정렬
+    - cv2.SORT_ASCENDING     0  -> 오름차순으로 정렬
+    - cv2.SORT_DECENDING     16 ->  내림차순으로 정렬
+  - 넘파이 사용시 사용 가능한 정렬.
+    - numpy는 OpenCV와 다르게 1, 0 flag가 반대!
+    - np.sort(src, axis = 1) -> x축 방향 정렬.
+    - np.sort(src, axis = 0) -> y축 방향 정렬.
+    - np.sort(src, axis = 1)[:, ::-1] -> 열 방향 내림차순 정렬.
 ---
 ## 6주차 내용
 
+- 행렬 원소 접근 방법 : [mat[i, j]*=2 for i in range(image.shape[0]) for j in range(image.shape[1])]
+- 행렬 원소를 item과 itemset으로 접근하기. mat.itemset((i,j), mat.item(i,j)*2))
+- 행렬을 통한 slice 방법 사용시 y,x가 바뀌는 것에 주의, 근데 생각해보면 image[100:200, 0:300] 일 때 
+      100,300 크기의 창을 띄운다고 생각하면 이해가 되기도 함.
+
+
 #### OpenCV와 numpy의 0 미만 255 이상의 화소값 처리 방식 다름 주의
 - OpenCV : 255+100 = 360 -> 255 (stauration 방식)
+  - numpy에서 사용하려면 np.clip(image, minValue, maxValue)
   - `cv2.add(iamge, 100)`, `cv2.subtract(image,100)`
 - numpy  : 255+100 = 350%255 -> 104 (modulo 방식)
   - `image + 100`, `image-100`
 
 - np.clip(image, 0, 255) -> 0부터 255까지 처리.
 - `cv2.addWeighted(image1, alpha, image2, beta, c)` -> result = image1 * a + image2 * b + c
+  -  cv2.add(image1*alpha, image2*beta) 와 같음.
 
-### 대비 : 같은 색도 인접한 색에 밝기에 따라서 다르게 보임
+### 대비 : 같은 색도 인접한 색에 밝기에 따라서 다르게 보임 add, addWeighted 응용!
 - cv2.scaledAdd(image, 0.5, 더할 이미지 *필수)  -> 일정 값을 곱하고 같은 크기의 이미지를 더함. 
+- cv2.scaledAdd(image, 2.0, 더할 이미지) -> cv2.add(src1, sclar, src2) 이기 때문. 
 - cv2.addWeighted(image, 2, 더할 이미지, 0, c) image * 2 + 더할 이미지 * 0 + c 값을 계산.
   - OpenCV 내의 scaledAdd를 사용하기 때문에 saturation 연산이 적용됨.
+  - 위와 같이 2.0을 곱해주면 전체적인 밝기가 증가하기 때문에 avg를 빼줌.
 
 ### 히스토그램
 #### 관측값의 개수를 겹치지 않는 다양한 계급으로 표시하는 것.
 - Histogram의 value / count of Histogram => P(i), 특정 Pixel이 등장할 확률을 구할 수 있음.
 - cv2.calcHist(image, channels, mask, histSize, ranges)
+  - image    : input Image
+  - channels : 히스토그램 계산에 사용되는 차원 목록.
+  - mask     : 특정 영역만 계산하기 위한 마스크 영역.
+  - histSize : 각 차원의 히스토그램 배열 크기. 단일 채널 8bit 행렬이라 할 때. ranges[1] = 256, ranges/bin_width(bin의 폭)
+    - 반대로  bin, gap, bin width = ranges[1]/histSize 
+  - ranges   : 각 차원의 히스토그램의 범위.
+  - [accumulate] : 각 차원의 히스토 그램의 범위, channel과 같이 쓰이지 않을까 싶다.
+``` python:
+- cv2.calcHist(images, [0], None, histSize, ranges)
+def calcHist_custom(images, histSize, ranges = [0, 256]):
+  hist = np.zeros((histSize,1), np.float32)
+  gap = ranges[1]/histSize
+  
+  for row in images:
+    for pix in row:
+      hist[pix//gap] +=1
+```
+ 
 - `cv2.normalize(src, dst, alpha, beta, norm_type, dtype, mask)` ->  n = (filtered - np.min()) / (np.max() - np.min())
 
 
