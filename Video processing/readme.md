@@ -221,11 +221,15 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 ---
 ## 6주차 내용
 
-- 행렬 원소 접근 방법 : [mat[i, j]*=2 for i in range(image.shape[0]) for j in range(image.shape[1])]
-- 행렬 원소를 item과 itemset으로 접근하기. mat.itemset((i,j), mat.item(i,j)*2))
-- 행렬을 통한 slice 방법 사용시 y,x가 바뀌는 것에 주의, 근데 생각해보면 image[100:200, 0:300] 일 때 
-      100,300 크기의 창을 띄운다고 생각하면 이해가 되기도 함.
-
+- 행렬 원소 접근 방법 : 
+``` python:
+[mat[row, col]*=2 for row in range(image.shape[0]) for col in range(image.shape[1])]
+```
+- 행렬 원소를 item과 itemset으로 접근하기. 
+  - mat.itemset((i,j), mat.item(i,j)*2))
+- 행렬을 통한 slice 방법 사용시 y,x가 바뀌는 것에 주의, 
+  - 근데 생각해보면 image[100:200, 0:300] 일 때 100,300 크기의 창을 띄운다고 생각하면 이해가 되기도 함.
+  - drawing `100th row to 200th row` and `0th col to 300th col`
 
 #### OpenCV와 numpy의 0 미만 255 이상의 화소값 처리 방식 다름 주의
 - OpenCV : 255+100 = 360 -> 255 (stauration 방식)
@@ -238,26 +242,45 @@ c = np.random.randint(1,6) # 1*6 크기의 (1행 6열) 정수로 이루어진 �
 - `cv2.addWeighted(image1, alpha, image2, beta, c)` -> result = image1 * a + image2 * b + c
   -  cv2.add(image1*alpha, image2*beta) 와 같음.
 
-### 대비 : 같은 색도 인접한 색에 밝기에 따라서 다르게 보임 add, addWeighted 응용!
-- cv2.scaledAdd(image, 0.5, 더할 이미지 *필수)  -> 일정 값을 곱하고 같은 크기의 이미지를 더함. 
-- cv2.scaledAdd(image, 2.0, 더할 이미지) -> cv2.add(src1, sclar, src2) 이기 때문. 
-- cv2.addWeighted(image, 2, 더할 이미지, 0, c) image * 2 + 더할 이미지 * 0 + c 값을 계산.
+### 대비 : 같은 색도 인접한 색에 밝기에 따라서 다르게 보임 add, scaledAdd addWeighted
+- cv2.add(src1, src2, dst, mask, dtype)
+  - cv2.add의 경우 src에 sclar를 곱하고 싶을 때 src1 = src*scalr 형태가 됨.
+  - 따라서 add가 적용되기 전 numpy.ndarray와 곱하기 때문에 255를 넘을 수 있음.
+  - `cv2.clip(src1, min_value, max_value).astype('uint8')` 을 통해 잘라주어야 함.
+  -  이를 보완하기 위해 scaledAdd가 등장.!
+- cv2.scaledAdd(src1, scaler, src2) -> dst
+  - 일정 값을 곱하고 같은 크기의 이미지를 더함.
+  - dst = src1*scaler + src2 
+- cv2.scaledAdd(scalr를 곱할 이미지, sclar, 더할 이미지) -> dst
+  - cv2.add(src1, src2, dst, mask, dtype)인데
+  - cv2.scaledAdd(src1, scalr, src2)는 다름.
+
+- cv2.addWeighted(src1, scalr1, src2, sclar2, avg) 
+  - src1 * sclar + src * sclar2 + avg
   - OpenCV 내의 scaledAdd를 사용하기 때문에 saturation 연산이 적용됨.
-  - 위와 같이 2.0을 곱해주면 전체적인 밝기가 증가하기 때문에 avg를 빼줌.
+  - 위와 같이 sclar을 곱해주면 전체적인 밝기가 증가/감소하기 때문에 avg를 통해 밝기 조절을 해줌.
+  - `cv2.addWeighted(img1, 0.6, img2, 0.4, 0)`
+    - img1에 0.6을 곱한 값과, img2에 0.4를 곱한값을 더해줌.
+    - 자동 saturation 연산 적용.
+      - img의 타입은 numpy.ndarray, 
+      - 직접적으로 img1 * 2 를 할 경우 255 넘을 수 있음 -> modulo 연산 적용.
+      - but addWeighted는 직접적으로 곱하고 더해주지 않음.
 
 ### 히스토그램
 #### 관측값의 개수를 겹치지 않는 다양한 계급으로 표시하는 것.
 - Histogram의 value / count of Histogram => P(i), 특정 Pixel이 등장할 확률을 구할 수 있음.
 - cv2.calcHist(image, channels, mask, histSize, ranges)
   - image    : input Image
-  - channels : 히스토그램 계산에 사용되는 차원 목록.
+  - channels : 히스토그램 계산에 사용되는 차원 목록. 
+    - 2차원 히스토그램을 그리고 싶다면 이친구 이용. 
   - mask     : 특정 영역만 계산하기 위한 마스크 영역.
   - histSize : 각 차원의 히스토그램 배열 크기. 단일 채널 8bit 행렬이라 할 때. ranges[1] = 256, ranges/bin_width(bin의 폭)
     - 반대로  bin, gap, bin width = ranges[1]/histSize 
   - ranges   : 각 차원의 히스토그램의 범위.
   - [accumulate] : 각 차원의 히스토 그램의 범위, channel과 같이 쓰이지 않을까 싶다.
+- cv2.calcHist(images, [0], None, [histSize], ranges)
+  - histSize는 벡터 형태, scalr 안됨. ranges = [0,256]
 ``` python:
-- cv2.calcHist(images, [0], None, histSize, ranges)
 def calcHist_custom(images, histSize, ranges = [0, 256]):
   hist = np.zeros((histSize,1), np.float32)
   gap = ranges[1]/histSize
@@ -266,7 +289,23 @@ def calcHist_custom(images, histSize, ranges = [0, 256]):
     for pix in row:
       hist[pix//gap] +=1
 ```
- 
+
+#### 히스토그램 그리기
+``` python:
+def draw_histo(hist, shape = (200,256)):
+  hist_img = np.full(shape, 255, np.uint8)
+  cv2.normalize(hist, hist, 0, shape[0], cv2.NORM_MINMAX) # 이미지의 row 수가 max값이 되게 정규화 진행.
+  gap = hist_img.shape[1]/hist.shape[0] # 이미지의 col수/히스토그램의 size = (width/histSize) -> gap
+  
+  for i, h in enumerate(hist):
+    x = int(round(i*gap))
+    w = int(round(gap))
+    cv2.rectangle(hist_img, (x,0, w, int(h)) , 0, cv2.FILLED)
+    # x,0에 w길이 만큼 width, h길이만큼 height 그리기. 색상은 0, thickness는 굵기! -> cv2.FILLED 쓰면 안에 꽉참
+    
+  return cv.flip(hist_img, 0) # x축으로 회전.
+```
+
 - `cv2.normalize(src, dst, alpha, beta, norm_type, dtype, mask)` ->  n = (filtered - np.min()) / (np.max() - np.min())
 
 
