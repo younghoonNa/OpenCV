@@ -2,8 +2,7 @@
 Image Processing Using Python OpenCV
 
 ## 유튜브 나도코딩 OpenCV편.
-[해당링크](https://www.youtube.com/watch?v=XK3eU9egll8)
-[소스코드] 잘못 올렸다..
+[해당링크](https://www.youtube.com/watch?v=XK3eU9egll8) <br>
 
 ## 영상처리 프로그래밍 
 [소스코드 및 공부내역](https://github.com/younghoonNa/OpenCV/tree/main/Video%20processing) 
